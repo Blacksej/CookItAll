@@ -46,9 +46,11 @@ namespace CookItAll.Controllers
         }
 
         // GET: Ingredients/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            IngredientViewModel cvm = new IngredientViewModel();
+            cvm.Categories = await _context.Category.ToListAsync();
+            return View(cvm);
         }
 
         // POST: Ingredients/Create
@@ -56,15 +58,15 @@ namespace CookItAll.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Ingredient ingredient)
+        public async Task<IActionResult> Create([Bind("Id,Name")] IngredientViewModel ingredientViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ingredient);
+                _context.Add(ingredientViewModel.Ingredient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(ingredient);
+            return View(ingredientViewModel.Ingredient);
         }
 
         // GET: Ingredients/Edit/5

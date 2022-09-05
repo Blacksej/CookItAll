@@ -6,7 +6,6 @@ namespace CookItAll.Models
     {
         public int Id { get; set; }
         public string Description { get; set; }
-        [ForeignKey("Step")]
         public virtual Recipe? Recipe { get; set; }
         [ForeignKey("Step")]
         public virtual Step? NextStep { get; set; }

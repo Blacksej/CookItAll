@@ -58,6 +58,7 @@ namespace CookItAll.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
+            ModelState.Remove("Ingredients");
             if (ModelState.IsValid)
             {
                 _context.Add(category);

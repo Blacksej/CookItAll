@@ -4,6 +4,7 @@ using CookItAll.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CookItAll.Data.Migrations
 {
     [DbContext(typeof(CookItAllContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220905203523_newtwo")]
+    partial class newtwo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,14 +135,7 @@ namespace CookItAll.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Recipe")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("Recipe")
-                        .IsUnique()
-                        .HasFilter("[Recipe] IS NOT NULL");
 
                     b.ToTable("Recipe");
                 });
@@ -162,7 +157,9 @@ namespace CookItAll.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Step");
+                    b.HasIndex("Step")
+                        .IsUnique()
+                        .HasFilter("[Step] IS NOT NULL");
 
                     b.ToTable("Step");
                 });
@@ -197,22 +194,19 @@ namespace CookItAll.Data.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("CookItAll.Models.Recipe", b =>
-                {
-                    b.HasOne("CookItAll.Models.Step", "Step")
-                        .WithOne("Recipe")
-                        .HasForeignKey("CookItAll.Models.Recipe", "Recipe");
-
-                    b.Navigation("Step");
-                });
-
             modelBuilder.Entity("CookItAll.Models.Step", b =>
                 {
+                    b.HasOne("CookItAll.Models.Recipe", "Recipe")
+                        .WithOne("Step")
+                        .HasForeignKey("CookItAll.Models.Step", "Step");
+
                     b.HasOne("CookItAll.Models.Step", "NextStep")
                         .WithMany()
                         .HasForeignKey("Step");
 
                     b.Navigation("NextStep");
+
+                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("CookItAll.Models.Category", b =>
@@ -233,11 +227,8 @@ namespace CookItAll.Data.Migrations
             modelBuilder.Entity("CookItAll.Models.Recipe", b =>
                 {
                     b.Navigation("IngredientAmounts");
-                });
 
-            modelBuilder.Entity("CookItAll.Models.Step", b =>
-                {
-                    b.Navigation("Recipe");
+                    b.Navigation("Step");
                 });
 #pragma warning restore 612, 618
         }

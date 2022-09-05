@@ -1,4 +1,6 @@
-﻿namespace CookItAll.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CookItAll.Models
 {
     public class Recipe
     {
@@ -7,6 +9,7 @@
         public string Description { get; set; }
         public string Image { get; set; }
         public List<IngredientAmount> IngredientAmounts { get; set; }
-        public Step Step { get; set; }
+        [ForeignKey("Recipe")]
+        public virtual Step? Step { get; set; }
     }
 }

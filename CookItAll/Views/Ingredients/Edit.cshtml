@@ -1,4 +1,4 @@
-﻿@model CookItAll.Models.Ingredient
+﻿@model CookItAll.Models.IngredientViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,11 +12,12 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Ingredient.Id" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Ingredient.Name" class="control-label"></label>
+                <input asp-for="Ingredient.Name" class="form-control" />
+                <span asp-validation-for="Ingredient.Name" class="text-danger"></span>
+                <select asp-for="CategoryID" class="form-control" asp-items="@new SelectList(Model.Categories, nameof(Category.Id), nameof(Category.Name))"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

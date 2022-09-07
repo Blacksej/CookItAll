@@ -22,9 +22,9 @@ namespace CookItAll.Controllers
         // GET: Ingredients
         public async Task<IActionResult> Index()
         {
-              return _context.Ingredient != null ? 
-                          View(await _context.Ingredient.ToListAsync()) :
-                          Problem("Entity set 'CookItAllContext.Ingredient'  is null.");
+            return _context.Ingredient != null ?
+                        View(await _context.Ingredient.ToListAsync()) :
+                        Problem("Entity set 'CookItAllContext.Ingredient'  is null.");
         }
 
         // GET: Ingredients/Details/5
@@ -35,7 +35,7 @@ namespace CookItAll.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredient
+            var ingredient = await _context.Ingredient.Include("Category")
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (ingredient == null)
             {
@@ -58,31 +58,39 @@ namespace CookItAll.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] IngredientViewModel ingredientViewModel)
+        public async Task<IActionResult> Create([Bind("Ingredient,Ingredient.Name,CategoryID")] IngredientViewModel ingredientViewModel)
         {
+            ModelState.Remove(nameof(ingredientViewModel.Categories));
+            ModelState.Remove("Ingredient.IngredientAmounts");
+
             if (ModelState.IsValid)
             {
+                // Add ID check.
+                ingredientViewModel.Ingredient.Category = await _context.Category.FirstOrDefaultAsync(m => m.Id == ingredientViewModel.CategoryID);
                 _context.Add(ingredientViewModel.Ingredient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(ingredientViewModel.Ingredient);
+            ingredientViewModel.Categories = await _context.Category.ToListAsync();
+            return View(ingredientViewModel);
         }
 
         // GET: Ingredients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            IngredientViewModel cvm = new IngredientViewModel();
+            cvm.Categories = await _context.Category.ToListAsync();
             if (id == null || _context.Ingredient == null)
             {
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredient.FindAsync(id);
-            if (ingredient == null)
+            cvm.Ingredient = await _context.Ingredient.FindAsync(id);
+            if (cvm.Ingredient == null)
             {
                 return NotFound();
             }
-            return View(ingredient);
+            return View(cvm);
         }
 
         // POST: Ingredients/Edit/5
@@ -90,23 +98,25 @@ namespace CookItAll.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Ingredient ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Ingredient,Ingredient.Name,CategoryID")] IngredientViewModel ingredientViewModel)
         {
-            if (id != ingredient.Id)
+            ingredientViewModel.Ingredient.Category = await _context.Category.FirstOrDefaultAsync(m => m.Id == ingredientViewModel.CategoryID);
+            if (id != ingredientViewModel.Ingredient.Id)
             {
                 return NotFound();
             }
-
+            ModelState.Remove(nameof(ingredientViewModel.Categories));
+            ModelState.Remove("Ingredient.IngredientAmounts");
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(ingredient);
+                    _context.Update(ingredientViewModel.Ingredient);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IngredientExists(ingredient.Id))
+                    if (!IngredientExists(ingredientViewModel.Ingredient.Id))
                     {
                         return NotFound();
                     }
@@ -117,7 +127,7 @@ namespace CookItAll.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(ingredient);
+            return View(ingredientViewModel);
         }
 
         // GET: Ingredients/Delete/5
@@ -152,14 +162,14 @@ namespace CookItAll.Controllers
             {
                 _context.Ingredient.Remove(ingredient);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool IngredientExists(int id)
         {
-          return (_context.Ingredient?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Ingredient?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

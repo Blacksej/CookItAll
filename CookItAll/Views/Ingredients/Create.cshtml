@@ -13,13 +13,10 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Ingredient" class="control-label"></label>
-                <input asp-for="Ingredient" class="form-control" />
-                <span asp-validation-for="Ingredient" class="text-danger"></span>
-                @foreach (var item in Model.Categories)
-                {
-                    <select asp-for="Ingredient" class="form-control" asp-items="@new SelectList(Model.Categories)"></select>
-                }
+                <label asp-for="Ingredient.Name" class="control-label"></label>
+                <input asp-for="Ingredient.Name" class="form-control" />
+                <span asp-validation-for="Ingredient.Name" class="text-danger"></span>
+                <select asp-for="CategoryID" class="form-control" asp-items="@new SelectList(Model.Categories, nameof(Category.Id), nameof(Category.Name))"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -95,7 +95,7 @@ namespace CookItAll.Controllers
             {
                 return NotFound();
             }
-
+            ModelState.Remove("Ingredients");
             if (ModelState.IsValid)
             {
                 try

@@ -7,8 +7,9 @@ namespace CookItAll.Models
         public int Id { get; set; }
 
         [Display(Name="Kategori")]
-        public string Name { get; set; }
-        public List<Ingredient> Ingredients { get; set; }
+        [Required]
+        public string? Name { get; set; }
+        public List<Ingredient>? Ingredients { get; set; }
 
         //public override string ToString()
         //{

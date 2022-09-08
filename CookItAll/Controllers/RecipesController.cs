@@ -46,9 +46,20 @@ namespace CookItAll.Controllers
         }
 
         // GET: Recipes/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            RecipeViewModel model = new RecipeViewModel();
+            model.Ingredients = await _context.Ingredient.ToListAsync();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(RecipeViewModel recipeViewModel, string step)
+        {
+            // FIX
+           recipeViewModel.Steps.Add(new Step() { Description = step});
+           return View(recipeViewModel);
         }
 
         // POST: Recipes/Create

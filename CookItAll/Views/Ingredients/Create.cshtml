@@ -1,7 +1,8 @@
-﻿@model CookItAll.Models.IngredientViewModel
+﻿@model CookItAll.Models.Ingredient
 
 @{
     ViewData["Title"] = "Create";
+    var categories = ViewData["categories"] as IEnumerable<Category>;
 }
 
 <h1>Create</h1>
@@ -13,10 +14,10 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Ingredient.Name" class="control-label"></label>
-                <input asp-for="Ingredient.Name" class="form-control" />
-                <span asp-validation-for="Ingredient.Name" class="text-danger"></span>
-                <select asp-for="CategoryID" class="form-control" asp-items="@new SelectList(Model.Categories, nameof(Category.Id), nameof(Category.Name))"></select>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+                <select name="categoryID" class="form-control" asp-items="@new SelectList(categories, nameof(Category.Id), nameof(Category.Name))"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

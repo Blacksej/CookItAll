@@ -48,9 +48,8 @@ namespace CookItAll.Controllers
         // GET: Ingredients/Create
         public async Task<IActionResult> Create()
         {
-            IngredientViewModel cvm = new IngredientViewModel();
-            cvm.Categories = await _context.Category.ToListAsync();
-            return View(cvm);
+            ViewData["categories"] = await _context.Category.ToListAsync();
+            return View();
         }
 
         // POST: Ingredients/Create
@@ -58,21 +57,18 @@ namespace CookItAll.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Ingredient,Ingredient.Name,CategoryID")] IngredientViewModel ingredientViewModel)
+        public async Task<IActionResult> Create([Bind("Name")] Ingredient ingredient, int categoryID)
         {
-            ModelState.Remove(nameof(ingredientViewModel.Categories));
-            ModelState.Remove("Ingredient.IngredientAmounts");
-
             if (ModelState.IsValid)
             {
                 // Add ID check.
-                ingredientViewModel.Ingredient.Category = await _context.Category.FirstOrDefaultAsync(m => m.Id == ingredientViewModel.CategoryID);
-                _context.Add(ingredientViewModel.Ingredient);
+                ingredient.Category = await _context.Category.FirstOrDefaultAsync(m => m.Id == categoryID);
+                _context.Add(ingredient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ingredientViewModel.Categories = await _context.Category.ToListAsync();
-            return View(ingredientViewModel);
+            ViewData["categories"] = await _context.Category.ToListAsync();
+            return View(ingredient);
         }
 
         // GET: Ingredients/Edit/5

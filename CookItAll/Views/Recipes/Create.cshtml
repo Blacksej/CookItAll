@@ -1,4 +1,4 @@
-﻿@model CookItAll.Models.Recipe
+﻿@model CookItAll.Models.RecipeViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,22 +13,55 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Recipe.Name" class="control-label"></label>
+                <input asp-for="Recipe.Name" class="form-control" />
+                <span asp-validation-for="Recipe.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="Recipe.Description" class="control-label"></label>
+                <input asp-for="Recipe.Description" class="form-control" />
+                <span asp-validation-for="Recipe.Description" class="text-danger"></span>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Steps
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Steps)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="form-group">
+                <label class="control-label">Ingredienser</label>
+                <select name="categoryID" class="form-control" asp-items="@new SelectList(Model.Ingredients, nameof(Ingredient.ID), nameof(Ingredient.Name))"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+                <label asp-for="Recipe.Image" class="control-label"></label>
+                <input asp-for="Recipe.Image" class="form-control" />
+                <span asp-validation-for="Recipe.Image" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+        <form asp-action="Create">
+            <div class="form-group">
+                <label class="control-label">Write your step</label>
+                <input name="step" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add Step" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -39,5 +72,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }
